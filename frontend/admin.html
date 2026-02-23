@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Management Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 flex h-screen overflow-hidden font-sans">
+
+    <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-20 hidden md:flex">
+        <div class="h-16 flex items-center justify-center border-b border-slate-800">
+            <h1 class="text-lg font-bold tracking-wider">Placement Portal</h1>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 bg-blue-600 px-4 py-3 rounded-lg text-sm font-medium shadow-md transition-colors">
+                Dashboard Overview
+            </button>
+            <button onclick="switchTab('students')" id="nav-students" class="w-full flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
+                Students Database
+            </button>
+            <button onclick="switchTab('companies')" id="nav-companies" class="w-full flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
+                Companies Directory
+            </button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="w-full flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
+                Admin Profile
+            </button>
+        </nav>
+        
+        <div class="p-4 border-t border-slate-800">
+            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto relative">
+        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-8 sticky top-0 z-10">
+            <h2 class="text-xl font-semibold text-slate-800" id="header-title">Real-time Applications</h2>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-medium text-slate-500" id="admin-greeting">System Admin</span>
+                <div class="h-8 w-8 bg-blue-800 rounded-full flex items-center justify-center text-white font-bold text-xs">SA</div>
+            </div>
+        </header>
+
+        <div class="p-8">
+            
+            <div id="view-dashboard" class="block">
+                <div class="flex justify-end mb-4">
+                    <button onclick="openModal('appModal'); loadDropdowns()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors">
+                        + New Application
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100"><p class="text-sm text-slate-500 font-medium mb-1">Total Applications</p><h3 class="text-3xl font-bold text-slate-800" id="stat-total">0</h3></div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100"><p class="text-sm text-slate-500 font-medium mb-1">Students Selected</p><h3 class="text-3xl font-bold text-green-600" id="stat-selected">0</h3></div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100"><p class="text-sm text-slate-500 font-medium mb-1">Currently Interviewing</p><h3 class="text-3xl font-bold text-yellow-500" id="stat-interviewing">0</h3></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead><tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-100"><th class="px-6 py-4">Student</th><th class="px-6 py-4">Company</th><th class="px-6 py-4">Role</th><th class="px-6 py-4">Status</th><th class="px-6 py-4">Action</th></tr></thead>
+                        <tbody id="app-table-body" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-students" class="hidden">
+                <div class="flex justify-end mb-4">
+                    <button onclick="openModal('studentModal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors">
+                        + Add Student
+                    </button>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead><tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-100"><th class="px-6 py-4">ID</th><th class="px-6 py-4">Name</th><th class="px-6 py-4">Email</th><th class="px-6 py-4">Dept</th><th class="px-6 py-4">CGPA</th></tr></thead>
+                        <tbody id="student-table-body" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-companies" class="hidden">
+                <div class="flex justify-end mb-4">
+                    <button onclick="openModal('companyModal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors">
+                        + Add Company
+                    </button>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead><tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-100"><th class="px-6 py-4">ID</th><th class="px-6 py-4">Company</th><th class="px-6 py-4">Role</th><th class="px-6 py-4">Package (LPA)</th></tr></thead>
+                        <tbody id="company-table-body" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-profile" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 max-w-2xl">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">Administrator Profile</h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Account Email</label>
+                        <input type="text" id="admin_email_display" disabled class="w-full border rounded-lg px-3 py-2 bg-slate-100 text-slate-600 cursor-not-allowed">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">System Role</label>
+                        <input type="text" value="Placement Admin" disabled class="w-full border rounded-lg px-3 py-2 bg-slate-100 text-slate-600 cursor-not-allowed">
+                    </div>
+                    <p class="text-sm text-slate-500 border-t pt-4">As an administrator, you have full access to manage students, companies, and placement application statuses.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="appModal" class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-bold text-slate-800 mb-4">Submit Application</h3>
+            <form onsubmit="submitApplication(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Select Student</label>
+                    <select id="app_student_id" required class="w-full border rounded-lg px-3 py-2 bg-white"></select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Select Company</label>
+                    <select id="app_company_id" required class="w-full border rounded-lg px-3 py-2 bg-white"></select>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Initial Status</label>
+                    <select id="app_status" class="w-full border rounded-lg px-3 py-2 bg-white">
+                        <option value="Applied">Applied</option>
+                        <option value="Interviewing">Interviewing</option>
+                        <option value="Selected">Selected</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3 border-t pt-4">
+                    <button type="button" onclick="closeModal('appModal')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="studentModal" class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-bold text-slate-800 mb-4">Add New Student</h3>
+            <form onsubmit="submitStudent(event)">
+                <input type="text" id="s_name" placeholder="Full Name" required class="w-full border rounded-lg px-3 py-2 mb-3">
+                <input type="email" id="s_email" placeholder="Email" required class="w-full border rounded-lg px-3 py-2 mb-3">
+                <input type="text" id="s_dept" placeholder="Department (e.g. Computer Engineering)" required class="w-full border rounded-lg px-3 py-2 mb-3">
+                <input type="number" step="0.01" id="s_cgpa" placeholder="CGPA" required class="w-full border rounded-lg px-3 py-2 mb-4">
+                <div class="flex justify-end gap-3 border-t pt-4">
+                    <button type="button" onclick="closeModal('studentModal')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="companyModal" class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-bold text-slate-800 mb-4">Add Visiting Company</h3>
+            <form onsubmit="submitCompany(event)">
+                <input type="text" id="c_name" placeholder="Company Name" required class="w-full border rounded-lg px-3 py-2 mb-3">
+                <input type="text" id="c_role" placeholder="Job Role" required class="w-full border rounded-lg px-3 py-2 mb-3">
+                <input type="number" step="0.01" id="c_lpa" placeholder="Package (LPA)" required class="w-full border rounded-lg px-3 py-2 mb-3">
+                <input type="date" id="c_date" required class="w-full border rounded-lg px-3 py-2 mb-4">
+                <div class="flex justify-end gap-3 border-t pt-4">
+                    <button type="button" onclick="closeModal('companyModal')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000/api';
+
+        // --- NEW: AUTHENTICATION CHECK ---
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+        
+        // If no user is logged in, OR they are just a student, kick them back to login!
+        if (!currentUser || currentUser.role !== 'Admin') {
+            alert("Unauthorized. Admin access required.");
+            window.location.href = 'login.html';
+        } else {
+            // Update the greeting and profile tab with the admin's email
+            document.getElementById('admin-greeting').innerText = currentUser.email.split('@')[0];
+            document.getElementById('admin_email_display').value = currentUser.email;
+        }
+
+        // --- TAB SWITCHING LOGIC ---
+        function switchTab(tab) {
+            ['dashboard', 'students', 'companies', 'profile'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).classList.remove('bg-blue-600');
+                document.getElementById(`nav-${t}`).classList.add('hover:bg-slate-800');
+            });
+            
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            document.getElementById(`nav-${tab}`).classList.add('bg-blue-600');
+            document.getElementById(`nav-${tab}`).classList.remove('hover:bg-slate-800');
+
+            if(tab === 'dashboard') { document.getElementById('header-title').innerText = "Real-time Applications"; fetchApplications(); }
+            if(tab === 'students') { document.getElementById('header-title').innerText = "Student Database"; fetchStudents(); }
+            if(tab === 'companies') { document.getElementById('header-title').innerText = "Companies Directory"; fetchCompanies(); }
+            if(tab === 'profile') { document.getElementById('header-title').innerText = "Admin Profile"; }
+        }
+
+        // --- NEW: LOGOUT FUNCTION ---
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // --- MODAL LOGIC ---
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { 
+            document.getElementById(id).classList.add('hidden'); 
+            document.querySelector(`#${id} form`).reset();
+        }
+
+        // --- DYNAMIC DROPDOWNS FOR APPLICATION MODAL ---
+        async function loadDropdowns() {
+            const stuRes = await fetch(`${API_BASE}/students/`);
+            const comRes = await fetch(`${API_BASE}/companies/`);
+            const students = await stuRes.json();
+            const companies = await comRes.json();
+
+            document.getElementById('app_student_id').innerHTML = students.map(s => `<option value="${s.student_id}">${s.full_name} (${s.department})</option>`).join('');
+            document.getElementById('app_company_id').innerHTML = companies.map(c => `<option value="${c.company_id}">${c.company_name} - ${c.job_role}</option>`).join('');
+        }
+
+        // --- FETCH & RENDER DATA ---
+        async function fetchApplications() {
+            const res = await fetch(`${API_BASE}/applications/`);
+            const data = await res.json();
+            const tbody = document.getElementById('app-table-body');
+            tbody.innerHTML = '';
+            
+            let [total, selected, interviewing] = [data.length, 0, 0];
+
+            data.forEach(app => {
+                if (app.status === 'Selected') selected++;
+                if (app.status === 'Interviewing') interviewing++;
+
+                let badge = app.status === 'Selected' ? 'bg-green-100 text-green-700' : 
+                            app.status === 'Interviewing' ? 'bg-yellow-100 text-yellow-700' : 
+                            app.status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700';
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-slate-50 hover:bg-slate-50">
+                        <td class="px-6 py-4 font-medium">${app.full_name}</td>
+                        <td class="px-6 py-4">${app.company_name}</td>
+                        <td class="px-6 py-4 text-slate-500">${app.job_role}</td>
+                        <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${badge}">${app.status}</span></td>
+                        <td class="px-6 py-4">
+                            <select onchange="updateStatus(${app.application_id}, this.value)" class="text-xs border rounded p-1 bg-white cursor-pointer font-medium text-slate-700">
+                                <option value="" disabled selected>Update</option>
+                                <option value="Applied">Applied</option>
+                                <option value="Interviewing">Interviewing</option>
+                                <option value="Selected">Selected</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </td>
+                    </tr>`;
+            });
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-selected').innerText = selected;
+            document.getElementById('stat-interviewing').innerText = interviewing;
+        }
+
+        async function fetchStudents() {
+            const res = await fetch(`${API_BASE}/students/`);
+            const data = await res.json();
+            document.getElementById('student-table-body').innerHTML = data.map(s => `
+                <tr class="border-b hover:bg-slate-50"><td class="px-6 py-4 font-bold text-slate-500">#${s.student_id}</td><td class="px-6 py-4 font-medium">${s.full_name}</td><td class="px-6 py-4">${s.email}</td><td class="px-6 py-4">${s.department}</td><td class="px-6 py-4 font-bold">${s.cgpa}</td></tr>
+            `).join('');
+        }
+
+        async function fetchCompanies() {
+            const res = await fetch(`${API_BASE}/companies/`);
+            const data = await res.json();
+            document.getElementById('company-table-body').innerHTML = data.map(c => `
+                <tr class="border-b hover:bg-slate-50"><td class="px-6 py-4 font-bold text-slate-500">#${c.company_id}</td><td class="px-6 py-4 font-medium">${c.company_name}</td><td class="px-6 py-4">${c.job_role}</td><td class="px-6 py-4 font-bold">${c.package_lpa} LPA</td></tr>
+            `).join('');
+        }
+
+        // --- SUBMIT POST REQUESTS ---
+        async function submitApplication(e) {
+            e.preventDefault();
+            const payload = { student_id: parseInt(document.getElementById('app_student_id').value), company_id: parseInt(document.getElementById('app_company_id').value), status: document.getElementById('app_status').value };
+            await fetch(`${API_BASE}/applications/`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+            closeModal('appModal'); fetchApplications();
+        }
+
+        async function submitStudent(e) {
+            e.preventDefault();
+            const payload = { full_name: document.getElementById('s_name').value, email: document.getElementById('s_email').value, department: document.getElementById('s_dept').value, cgpa: parseFloat(document.getElementById('s_cgpa').value) };
+            await fetch(`${API_BASE}/students/`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+            closeModal('studentModal'); fetchStudents();
+        }
+
+        async function submitCompany(e) {
+            e.preventDefault();
+            const payload = { company_name: document.getElementById('c_name').value, job_role: document.getElementById('c_role').value, package_lpa: parseFloat(document.getElementById('c_lpa').value), visit_date: document.getElementById('c_date').value };
+            await fetch(`${API_BASE}/companies/`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+            closeModal('companyModal'); fetchCompanies();
+        }
+
+        // --- UPDATE PUT REQUEST ---
+        async function updateStatus(appId, newStatus) {
+            await fetch(`${API_BASE}/applications/${appId}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ status: newStatus }) });
+            fetchApplications(); // Instantly refresh the table to show new color badge
+        }
+
+        // Initialize default view
+        fetchApplications();
+    </script>
+</body>
+</html>

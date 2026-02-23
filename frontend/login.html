@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Portal - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Smooth fade transition between forms */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-900 h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070')] bg-cover bg-center bg-no-repeat relative">
+
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+    <div
+        class="relative z-10 w-full max-w-md bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20">
+
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Campus Placement Portal</h1>
+            <p class="text-sm text-slate-500 mt-1">Sign in to manage your placement journey</p>
+        </div>
+
+        <form id="login-form" class="fade-in block" onsubmit="handleLogin(event)">
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Email Address</label>
+                <input type="email" id="login_email" required
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
+                <input type="password" id="login_password" required
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
+            </div>
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg shadow-md transition-colors">
+                Sign In
+            </button>
+            <p class="text-center text-sm text-slate-600 mt-6">
+                Don't have an account? <button type="button" onclick="toggleForms()"
+                    class="text-blue-600 font-bold hover:underline">Create Account</button>
+            </p>
+        </form>
+
+        <form id="register-form" class="fade-in hidden" onsubmit="handleRegister(event)">
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Full Name</label>
+                <input type="text" id="reg_name" required
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Email Address</label>
+                <input type="email" id="reg_email" required
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Account Type</label>
+                <select id="reg_role"
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
+                    <option value="Student">Student (Apply for roles)</option>
+                    <option value="Admin">Admin (Manage placements)</option>
+                </select>
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
+                <input type="password" id="reg_password" required
+                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
+            </div>
+            <button type="submit"
+                class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-lg shadow-md transition-colors">
+                Create Account
+            </button>
+            <p class="text-center text-sm text-slate-600 mt-6">
+                Already have an account? <button type="button" onclick="toggleForms()"
+                    class="text-blue-600 font-bold hover:underline">Sign In</button>
+            </p>
+        </form>
+
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000/api';
+
+        function toggleForms() {
+            document.getElementById('login-form').classList.toggle('hidden');
+            document.getElementById('register-form').classList.toggle('hidden');
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const payload = {
+                email: document.getElementById('login_email').value,
+                password: document.getElementById('login_password').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+
+                    // Save user data securely in the browser's local storage
+                    localStorage.setItem('user', JSON.stringify(userData));
+
+                    // Redirect based on role!
+                    if (userData.role === 'Admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'student.html';
+                    }
+                } else {
+                    const error = await response.json();
+                    alert(`Login Failed: ${error.detail}`);
+                }
+            } catch (err) { alert("Cannot connect to server."); }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const payload = {
+                full_name: document.getElementById('reg_name').value,
+                email: document.getElementById('reg_email').value,
+                role: document.getElementById('reg_role').value,
+                password: document.getElementById('reg_password').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert("Account Created! You can now sign in.");
+                    toggleForms(); // Switch back to login view
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.detail}`);
+                }
+            } catch (err) { alert("Cannot connect to server."); }
+        }
+    </script>
+</body>
+
+</html>
