@@ -33,16 +33,19 @@ async def register_user(user: RegisterRequest):
     hashed_pw = hash_password(user.password)
     student_id = None
 
-    # 2. If they are a student, create a blank student profile first to get an ID
+    # 2. If student, create a blank student profile using only the original base columns
     if user.role == "Student":
         student_query = """
-            INSERT INTO Students (full_name, email, department, cgpa) 
-            VALUES (:full_name, :email, 'Please Update Profile', 0.0)
+            INSERT INTO Students (full_name, email, department)
+            VALUES (:full_name, :email, 'Please Update Profile')
         """
-        student_id = await database.execute(query=student_query, values={
-            "full_name": user.full_name,
-            "email": user.email
-        })
+        try:
+            student_id = await database.execute(query=student_query, values={
+                "full_name": user.full_name,
+                "email": user.email
+            })
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to create student profile: {str(e)}")
 
     # 3. Create the User account and link it
     user_query = """
@@ -58,7 +61,8 @@ async def register_user(user: RegisterRequest):
         })
         return {"message": "Account created successfully!"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Failed to create user account: {str(e)}")
+
 
 
 @router.post("/login")

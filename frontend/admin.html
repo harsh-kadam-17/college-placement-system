@@ -1,117 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Placement Management Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 flex h-screen overflow-hidden font-sans">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
 
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
     <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-20 hidden md:flex">
         <div class="h-16 flex items-center justify-center border-b border-slate-800">
             <h1 class="text-lg font-bold tracking-wider">Placement Portal</h1>
         </div>
         <nav class="flex-1 px-4 py-6 space-y-2">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 bg-blue-600 px-4 py-3 rounded-lg text-sm font-medium shadow-md transition-colors">
-                Dashboard Overview
+            <button onclick="switchTab('dashboard')" id="nav-dashboard"
+                class="w-full flex items-center gap-3 bg-blue-600 px-4 py-3 rounded-lg text-sm font-medium shadow-md transition-colors">
+                📊 Dashboard Overview
             </button>
-            <button onclick="switchTab('students')" id="nav-students" class="w-full flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
-                Students Database
+            <button onclick="switchTab('students')" id="nav-students"
+                class="w-full flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
+                🎓 Students Database
             </button>
-            <button onclick="switchTab('companies')" id="nav-companies" class="w-full flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
-                Companies Directory
+            <button onclick="switchTab('companies')" id="nav-companies"
+                class="w-full flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
+                🏢 Companies Directory
             </button>
-            <button onclick="switchTab('profile')" id="nav-profile" class="w-full flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
-                Admin Profile
+            <button onclick="switchTab('profile')" id="nav-profile"
+                class="w-full flex items-center gap-3 hover:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
+                👤 Admin Profile
             </button>
         </nav>
-        
         <div class="p-4 border-t border-slate-800">
-            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            <button onclick="logout()"
+                class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                 Sign Out
             </button>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-screen overflow-y-auto relative">
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto">
         <header class="h-16 bg-white shadow-sm flex items-center justify-between px-8 sticky top-0 z-10">
             <h2 class="text-xl font-semibold text-slate-800" id="header-title">Real-time Applications</h2>
             <div class="flex items-center gap-4">
                 <span class="text-sm font-medium text-slate-500" id="admin-greeting">System Admin</span>
-                <div class="h-8 w-8 bg-blue-800 rounded-full flex items-center justify-center text-white font-bold text-xs">SA</div>
+                <div
+                    class="h-8 w-8 bg-blue-800 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                    SA</div>
             </div>
         </header>
 
         <div class="p-8">
-            
+
+            <!-- DASHBOARD TAB -->
             <div id="view-dashboard" class="block">
                 <div class="flex justify-end mb-4">
-                    <button onclick="openModal('appModal'); loadDropdowns()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors">
+                    <button onclick="openModal('appModal'); loadDropdowns()"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors">
                         + New Application
                     </button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100"><p class="text-sm text-slate-500 font-medium mb-1">Total Applications</p><h3 class="text-3xl font-bold text-slate-800" id="stat-total">0</h3></div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100"><p class="text-sm text-slate-500 font-medium mb-1">Students Selected</p><h3 class="text-3xl font-bold text-green-600" id="stat-selected">0</h3></div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100"><p class="text-sm text-slate-500 font-medium mb-1">Currently Interviewing</p><h3 class="text-3xl font-bold text-yellow-500" id="stat-interviewing">0</h3></div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <p class="text-sm text-slate-500 font-medium mb-1">Total Applications</p>
+                        <h3 class="text-3xl font-bold text-slate-800" id="stat-total">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <p class="text-sm text-slate-500 font-medium mb-1">Students Selected</p>
+                        <h3 class="text-3xl font-bold text-green-600" id="stat-selected">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <p class="text-sm text-slate-500 font-medium mb-1">Currently Interviewing</p>
+                        <h3 class="text-3xl font-bold text-yellow-500" id="stat-interviewing">0</h3>
+                    </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                     <table class="w-full text-left border-collapse">
-                        <thead><tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-100"><th class="px-6 py-4">Student</th><th class="px-6 py-4">Company</th><th class="px-6 py-4">Role</th><th class="px-6 py-4">Status</th><th class="px-6 py-4">Action</th></tr></thead>
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-100">
+                                <th class="px-6 py-4">Student</th>
+                                <th class="px-6 py-4">CGPA</th>
+                                <th class="px-6 py-4">Company</th>
+                                <th class="px-6 py-4">Role</th>
+                                <th class="px-6 py-4">Package</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4">Action</th>
+                            </tr>
+                        </thead>
                         <tbody id="app-table-body" class="text-sm"></tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- STUDENTS TAB -->
             <div id="view-students" class="hidden">
                 <div class="flex justify-end mb-4">
-                    <button onclick="openModal('studentModal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors">
+                    <button onclick="openModal('studentModal')"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors">
                         + Add Student
                     </button>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                     <table class="w-full text-left border-collapse">
-                        <thead><tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-100"><th class="px-6 py-4">ID</th><th class="px-6 py-4">Name</th><th class="px-6 py-4">Email</th><th class="px-6 py-4">Dept</th><th class="px-6 py-4">CGPA</th></tr></thead>
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-100">
+                                <th class="px-6 py-4">ID</th>
+                                <th class="px-6 py-4">Name</th>
+                                <th class="px-6 py-4">Email</th>
+                                <th class="px-6 py-4">Dept</th>
+                                <th class="px-6 py-4">Agg. CGPA</th>
+                                <th class="px-6 py-4">Resume</th>
+                                <th class="px-6 py-4">Action</th>
+                            </tr>
+                        </thead>
                         <tbody id="student-table-body" class="text-sm"></tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- COMPANIES TAB -->
             <div id="view-companies" class="hidden">
                 <div class="flex justify-end mb-4">
-                    <button onclick="openModal('companyModal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors">
+                    <button onclick="openModal('companyModal')"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors">
                         + Add Company
                     </button>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                     <table class="w-full text-left border-collapse">
-                        <thead><tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-100"><th class="px-6 py-4">ID</th><th class="px-6 py-4">Company</th><th class="px-6 py-4">Role</th><th class="px-6 py-4">Package (LPA)</th></tr></thead>
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-100">
+                                <th class="px-6 py-4">ID</th>
+                                <th class="px-6 py-4">Company</th>
+                                <th class="px-6 py-4">Role</th>
+                                <th class="px-6 py-4">Package Range</th>
+                                <th class="px-6 py-4">Min CGPA</th>
+                                <th class="px-6 py-4">Visit Date</th>
+                                <th class="px-6 py-4">Action</th>
+                            </tr>
+                        </thead>
                         <tbody id="company-table-body" class="text-sm"></tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- PROFILE TAB -->
             <div id="view-profile" class="hidden">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 max-w-2xl">
                     <h3 class="text-lg font-bold text-slate-800 mb-6">Administrator Profile</h3>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-slate-700 mb-1">Account Email</label>
-                        <input type="text" id="admin_email_display" disabled class="w-full border rounded-lg px-3 py-2 bg-slate-100 text-slate-600 cursor-not-allowed">
+                        <input type="text" id="admin_email_display" disabled
+                            class="w-full border rounded-lg px-3 py-2 bg-slate-100 text-slate-600 cursor-not-allowed">
                     </div>
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-slate-700 mb-1">System Role</label>
-                        <input type="text" value="Placement Admin" disabled class="w-full border rounded-lg px-3 py-2 bg-slate-100 text-slate-600 cursor-not-allowed">
+                        <input type="text" value="Placement Admin" disabled
+                            class="w-full border rounded-lg px-3 py-2 bg-slate-100 text-slate-600 cursor-not-allowed">
                     </div>
-                    <p class="text-sm text-slate-500 border-t pt-4">As an administrator, you have full access to manage students, companies, and placement application statuses.</p>
+                    <p class="text-sm text-slate-500 border-t pt-4">As an administrator, you have full access to manage
+                        students, companies, and placement application statuses.</p>
                 </div>
             </div>
 
         </div>
     </main>
 
-    <div id="appModal" class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+    <!-- ===== NEW APPLICATION MODAL ===== -->
+    <div id="appModal"
+        class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 fade-in">
             <h3 class="text-lg font-bold text-slate-800 mb-4">Submit Application</h3>
             <form onsubmit="submitApplication(event)">
                 <div class="mb-4">
@@ -132,40 +214,84 @@
                     </select>
                 </div>
                 <div class="flex justify-end gap-3 border-t pt-4">
-                    <button type="button" onclick="closeModal('appModal')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Save</button>
+                    <button type="button" onclick="closeModal('appModal')"
+                        class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="studentModal" class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+    <!-- ===== ADD STUDENT MODAL ===== -->
+    <div id="studentModal"
+        class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 fade-in">
             <h3 class="text-lg font-bold text-slate-800 mb-4">Add New Student</h3>
-            <form onsubmit="submitStudent(event)">
-                <input type="text" id="s_name" placeholder="Full Name" required class="w-full border rounded-lg px-3 py-2 mb-3">
-                <input type="email" id="s_email" placeholder="Email" required class="w-full border rounded-lg px-3 py-2 mb-3">
-                <input type="text" id="s_dept" placeholder="Department (e.g. Computer Engineering)" required class="w-full border rounded-lg px-3 py-2 mb-3">
-                <input type="number" step="0.01" id="s_cgpa" placeholder="CGPA" required class="w-full border rounded-lg px-3 py-2 mb-4">
-                <div class="flex justify-end gap-3 border-t pt-4">
-                    <button type="button" onclick="closeModal('studentModal')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Save</button>
+            <form onsubmit="submitStudent(event)" class="space-y-3">
+                <input type="text" id="s_name" placeholder="Full Name" required
+                    class="w-full border rounded-lg px-3 py-2">
+                <input type="email" id="s_email" placeholder="Email" required
+                    class="w-full border rounded-lg px-3 py-2">
+                <input type="text" id="s_dept" placeholder="Department (e.g. Computer Engineering)" required
+                    class="w-full border rounded-lg px-3 py-2">
+                <div class="grid grid-cols-4 gap-2">
+                    <input type="number" step="0.01" id="s_y1" placeholder="Y1 CGPA"
+                        class="border rounded-lg px-2 py-2 text-sm">
+                    <input type="number" step="0.01" id="s_y2" placeholder="Y2 CGPA"
+                        class="border rounded-lg px-2 py-2 text-sm">
+                    <input type="number" step="0.01" id="s_y3" placeholder="Y3 CGPA"
+                        class="border rounded-lg px-2 py-2 text-sm">
+                    <input type="number" step="0.01" id="s_y4" placeholder="Y4 CGPA"
+                        class="border rounded-lg px-2 py-2 text-sm">
+                </div>
+                <p class="text-xs text-slate-400">Year-wise CGPA (leave blank if not applicable)</p>
+                <div class="flex justify-end gap-3 border-t pt-3">
+                    <button type="button" onclick="closeModal('studentModal')"
+                        class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="companyModal" class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+    <!-- ===== ADD COMPANY MODAL ===== -->
+    <div id="companyModal"
+        class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 fade-in">
             <h3 class="text-lg font-bold text-slate-800 mb-4">Add Visiting Company</h3>
-            <form onsubmit="submitCompany(event)">
-                <input type="text" id="c_name" placeholder="Company Name" required class="w-full border rounded-lg px-3 py-2 mb-3">
-                <input type="text" id="c_role" placeholder="Job Role" required class="w-full border rounded-lg px-3 py-2 mb-3">
-                <input type="number" step="0.01" id="c_lpa" placeholder="Package (LPA)" required class="w-full border rounded-lg px-3 py-2 mb-3">
-                <input type="date" id="c_date" required class="w-full border rounded-lg px-3 py-2 mb-4">
-                <div class="flex justify-end gap-3 border-t pt-4">
-                    <button type="button" onclick="closeModal('companyModal')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Save</button>
+            <form onsubmit="submitCompany(event)" class="space-y-3">
+                <input type="text" id="c_name" placeholder="Company Name" required
+                    class="w-full border rounded-lg px-3 py-2">
+                <input type="text" id="c_role" placeholder="Job Role (e.g. Software Engineer)" required
+                    class="w-full border rounded-lg px-3 py-2">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-500 mb-1">Min Package (LPA)</label>
+                        <input type="number" step="0.5" min="0" id="c_pkg_min" placeholder="e.g. 6" required
+                            class="w-full border rounded-lg px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-500 mb-1">Max Package (LPA)</label>
+                        <input type="number" step="0.5" min="0" id="c_pkg_max" placeholder="e.g. 12" required
+                            class="w-full border rounded-lg px-3 py-2">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-500 mb-1">Minimum CGPA Required</label>
+                    <input type="number" step="0.01" min="0" max="10" id="c_min_cgpa" placeholder="e.g. 7.0" required
+                        class="w-full border rounded-lg px-3 py-2">
+                </div>
+                <input type="date" id="c_date" required class="w-full border rounded-lg px-3 py-2">
+                <p class="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+                    ⚠️ A company can only be listed for each role once.
+                </p>
+                <div class="flex justify-end gap-3 border-t pt-3">
+                    <button type="button" onclick="closeModal('companyModal')"
+                        class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Save</button>
                 </div>
             </form>
         </div>
@@ -173,84 +299,82 @@
 
     <script>
         const API_BASE = 'http://127.0.0.1:8000/api';
-
-        // --- NEW: AUTHENTICATION CHECK ---
         const currentUser = JSON.parse(localStorage.getItem('user'));
-        
-        // If no user is logged in, OR they are just a student, kick them back to login!
+
         if (!currentUser || currentUser.role !== 'Admin') {
-            alert("Unauthorized. Admin access required.");
+            alert('Unauthorized. Admin access required.');
             window.location.href = 'login.html';
         } else {
-            // Update the greeting and profile tab with the admin's email
             document.getElementById('admin-greeting').innerText = currentUser.email.split('@')[0];
             document.getElementById('admin_email_display').value = currentUser.email;
         }
 
-        // --- TAB SWITCHING LOGIC ---
+        // ---- TAB SWITCHING ----
         function switchTab(tab) {
             ['dashboard', 'students', 'companies', 'profile'].forEach(t => {
                 document.getElementById(`view-${t}`).classList.add('hidden');
                 document.getElementById(`nav-${t}`).classList.remove('bg-blue-600');
                 document.getElementById(`nav-${t}`).classList.add('hover:bg-slate-800');
             });
-            
             document.getElementById(`view-${tab}`).classList.remove('hidden');
             document.getElementById(`nav-${tab}`).classList.add('bg-blue-600');
             document.getElementById(`nav-${tab}`).classList.remove('hover:bg-slate-800');
 
-            if(tab === 'dashboard') { document.getElementById('header-title').innerText = "Real-time Applications"; fetchApplications(); }
-            if(tab === 'students') { document.getElementById('header-title').innerText = "Student Database"; fetchStudents(); }
-            if(tab === 'companies') { document.getElementById('header-title').innerText = "Companies Directory"; fetchCompanies(); }
-            if(tab === 'profile') { document.getElementById('header-title').innerText = "Admin Profile"; }
+            if (tab === 'dashboard') { document.getElementById('header-title').innerText = 'Real-time Applications'; fetchApplications(); }
+            if (tab === 'students') { document.getElementById('header-title').innerText = 'Student Database'; fetchStudents(); }
+            if (tab === 'companies') { document.getElementById('header-title').innerText = 'Companies Directory'; fetchCompanies(); }
+            if (tab === 'profile') { document.getElementById('header-title').innerText = 'Admin Profile'; }
         }
 
-        // --- NEW: LOGOUT FUNCTION ---
-        function logout() {
-            localStorage.removeItem('user');
-            window.location.href = 'login.html';
-        }
+        function logout() { localStorage.removeItem('user'); window.location.href = 'login.html'; }
 
-        // --- MODAL LOGIC ---
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { 
-            document.getElementById(id).classList.add('hidden'); 
-            document.querySelector(`#${id} form`).reset();
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            const f = document.querySelector(`#${id} form`);
+            if (f) f.reset();
         }
 
-        // --- DYNAMIC DROPDOWNS FOR APPLICATION MODAL ---
+        // ---- DROPDOWNS FOR APP MODAL ----
         async function loadDropdowns() {
-            const stuRes = await fetch(`${API_BASE}/students/`);
-            const comRes = await fetch(`${API_BASE}/companies/`);
+            const [stuRes, comRes] = await Promise.all([
+                fetch(`${API_BASE}/students/`),
+                fetch(`${API_BASE}/companies/`)
+            ]);
             const students = await stuRes.json();
             const companies = await comRes.json();
-
-            document.getElementById('app_student_id').innerHTML = students.map(s => `<option value="${s.student_id}">${s.full_name} (${s.department})</option>`).join('');
-            document.getElementById('app_company_id').innerHTML = companies.map(c => `<option value="${c.company_id}">${c.company_name} - ${c.job_role}</option>`).join('');
+            document.getElementById('app_student_id').innerHTML = students.map(s =>
+                `<option value="${s.student_id}">${s.full_name} (CGPA: ${s.aggregate_cgpa})</option>`
+            ).join('');
+            document.getElementById('app_company_id').innerHTML = companies.map(c =>
+                `<option value="${c.company_id}">${c.company_name} — ${c.job_role} (Min: ${c.min_cgpa})</option>`
+            ).join('');
         }
 
-        // --- FETCH & RENDER DATA ---
+        // ---- FETCH APPLICATIONS ----
         async function fetchApplications() {
             const res = await fetch(`${API_BASE}/applications/`);
             const data = await res.json();
             const tbody = document.getElementById('app-table-body');
             tbody.innerHTML = '';
-            
             let [total, selected, interviewing] = [data.length, 0, 0];
 
             data.forEach(app => {
                 if (app.status === 'Selected') selected++;
                 if (app.status === 'Interviewing') interviewing++;
-
-                let badge = app.status === 'Selected' ? 'bg-green-100 text-green-700' : 
-                            app.status === 'Interviewing' ? 'bg-yellow-100 text-yellow-700' : 
-                            app.status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700';
-
+                const badge = app.status === 'Selected' ? 'bg-green-100 text-green-700' :
+                    app.status === 'Interviewing' ? 'bg-yellow-100 text-yellow-700' :
+                        app.status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700';
+                const pkg = app.package_min === app.package_max
+                    ? `${app.package_min} LPA`
+                    : `${app.package_min}–${app.package_max} LPA`;
                 tbody.innerHTML += `
                     <tr class="border-b border-slate-50 hover:bg-slate-50">
                         <td class="px-6 py-4 font-medium">${app.full_name}</td>
+                        <td class="px-6 py-4 text-slate-500 font-bold">${app.aggregate_cgpa}</td>
                         <td class="px-6 py-4">${app.company_name}</td>
                         <td class="px-6 py-4 text-slate-500">${app.job_role}</td>
+                        <td class="px-6 py-4 font-semibold text-green-700">${pkg}</td>
                         <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${badge}">${app.status}</span></td>
                         <td class="px-6 py-4">
                             <select onchange="updateStatus(${app.application_id}, this.value)" class="text-xs border rounded p-1 bg-white cursor-pointer font-medium text-slate-700">
@@ -268,52 +392,149 @@
             document.getElementById('stat-interviewing').innerText = interviewing;
         }
 
+        // ---- FETCH STUDENTS ----
         async function fetchStudents() {
             const res = await fetch(`${API_BASE}/students/`);
             const data = await res.json();
             document.getElementById('student-table-body').innerHTML = data.map(s => `
-                <tr class="border-b hover:bg-slate-50"><td class="px-6 py-4 font-bold text-slate-500">#${s.student_id}</td><td class="px-6 py-4 font-medium">${s.full_name}</td><td class="px-6 py-4">${s.email}</td><td class="px-6 py-4">${s.department}</td><td class="px-6 py-4 font-bold">${s.cgpa}</td></tr>
-            `).join('');
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="px-6 py-4 font-bold text-slate-400">#${s.student_id}</td>
+                    <td class="px-6 py-4 font-medium">${s.full_name}</td>
+                    <td class="px-6 py-4 text-slate-500">${s.email}</td>
+                    <td class="px-6 py-4">${s.department}</td>
+                    <td class="px-6 py-4 font-bold text-blue-600">${s.aggregate_cgpa || '—'}</td>
+                    <td class="px-6 py-4">${s.resume_link
+                    ? `<a href="${s.resume_link}" target="_blank" class="text-blue-600 hover:underline text-xs font-medium">View Resume ↗</a>`
+                    : `<span class="text-red-400 text-xs">Not uploaded</span>`
+                }</td>
+                    <td class="px-6 py-4">
+                        <button onclick="deleteStudent(${s.student_id}, '${s.full_name}')"
+                            class="text-xs font-medium text-red-600 hover:text-white hover:bg-red-600 border border-red-300 hover:border-red-600 px-3 py-1 rounded-lg transition">
+                            🗑 Delete
+                        </button>
+                    </td>
+                </tr>`).join('');
         }
 
+        // ---- FETCH COMPANIES ----
         async function fetchCompanies() {
             const res = await fetch(`${API_BASE}/companies/`);
             const data = await res.json();
-            document.getElementById('company-table-body').innerHTML = data.map(c => `
-                <tr class="border-b hover:bg-slate-50"><td class="px-6 py-4 font-bold text-slate-500">#${c.company_id}</td><td class="px-6 py-4 font-medium">${c.company_name}</td><td class="px-6 py-4">${c.job_role}</td><td class="px-6 py-4 font-bold">${c.package_lpa} LPA</td></tr>
-            `).join('');
+            document.getElementById('company-table-body').innerHTML = data.map(c => {
+                const pkg = c.package_min === c.package_max
+                    ? `${c.package_min} LPA`
+                    : `${c.package_min} – ${c.package_max} LPA`;
+                const visitDate = new Date(c.visit_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                return `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="px-6 py-4 font-bold text-slate-400">#${c.company_id}</td>
+                        <td class="px-6 py-4 font-medium">${c.company_name}</td>
+                        <td class="px-6 py-4">${c.job_role}</td>
+                        <td class="px-6 py-4 font-bold text-green-700">${pkg}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs font-bold">${c.min_cgpa}+</span></td>
+                        <td class="px-6 py-4 text-slate-500">${visitDate}</td>
+                        <td class="px-6 py-4">
+                            <button onclick="deleteCompany(${c.company_id}, '${c.company_name}', '${c.job_role}')"
+                                class="text-xs font-medium text-red-600 hover:text-white hover:bg-red-600 border border-red-300 hover:border-red-600 px-3 py-1 rounded-lg transition">
+                                🗑 Delete
+                            </button>
+                        </td>
+                    </tr>`;
+            }).join('');
         }
 
-        // --- SUBMIT POST REQUESTS ---
+        // ---- DELETE STUDENT ----
+        async function deleteStudent(id, name) {
+            if (!confirm(`Are you sure you want to delete student "${name}"?\n\nThis will also remove all their applications.`)) return;
+            const res = await fetch(`${API_BASE}/students/${id}`, { method: 'DELETE' });
+            if (res.ok) { fetchStudents(); }
+            else { const err = await res.json(); alert(`Error: ${err.detail}`); }
+        }
+
+        // ---- DELETE COMPANY ----
+        async function deleteCompany(id, name, role) {
+            if (!confirm(`Are you sure you want to delete "${name} — ${role}"?\n\nAll applications for this company will also be deleted.`)) return;
+            const res = await fetch(`${API_BASE}/companies/${id}`, { method: 'DELETE' });
+            if (res.ok) { fetchCompanies(); }
+            else { const err = await res.json(); alert(`Error: ${err.detail}`); }
+        }
+
+        // ---- SUBMIT APPLICATION ----
         async function submitApplication(e) {
             e.preventDefault();
-            const payload = { student_id: parseInt(document.getElementById('app_student_id').value), company_id: parseInt(document.getElementById('app_company_id').value), status: document.getElementById('app_status').value };
-            await fetch(`${API_BASE}/applications/`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-            closeModal('appModal'); fetchApplications();
+            const payload = {
+                student_id: parseInt(document.getElementById('app_student_id').value),
+                company_id: parseInt(document.getElementById('app_company_id').value),
+                status: document.getElementById('app_status').value
+            };
+            const res = await fetch(`${API_BASE}/applications/`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                closeModal('appModal'); fetchApplications();
+            } else {
+                const err = await res.json();
+                alert(`Error: ${err.detail}`);
+            }
         }
 
+        // ---- SUBMIT STUDENT ----
         async function submitStudent(e) {
             e.preventDefault();
-            const payload = { full_name: document.getElementById('s_name').value, email: document.getElementById('s_email').value, department: document.getElementById('s_dept').value, cgpa: parseFloat(document.getElementById('s_cgpa').value) };
-            await fetch(`${API_BASE}/students/`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-            closeModal('studentModal'); fetchStudents();
+            const y1 = parseFloat(document.getElementById('s_y1').value) || 0;
+            const y2 = parseFloat(document.getElementById('s_y2').value) || 0;
+            const y3 = parseFloat(document.getElementById('s_y3').value) || 0;
+            const y4 = parseFloat(document.getElementById('s_y4').value) || 0;
+            const filled = [y1, y2, y3, y4].filter(v => v > 0);
+            const agg = filled.length > 0 ? parseFloat((filled.reduce((a, b) => a + b, 0) / filled.length).toFixed(2)) : 0;
+            const payload = {
+                full_name: document.getElementById('s_name').value,
+                email: document.getElementById('s_email').value,
+                department: document.getElementById('s_dept').value,
+                cgpa_year1: y1, cgpa_year2: y2, cgpa_year3: y3, cgpa_year4: y4,
+                aggregate_cgpa: agg,
+                resume_link: null, marksheet_link: null
+            };
+            const res = await fetch(`${API_BASE}/students/`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+            });
+            if (res.ok) { closeModal('studentModal'); fetchStudents(); }
+            else { const err = await res.json(); alert(`Error: ${err.detail}`); }
         }
 
+        // ---- SUBMIT COMPANY ----
         async function submitCompany(e) {
             e.preventDefault();
-            const payload = { company_name: document.getElementById('c_name').value, job_role: document.getElementById('c_role').value, package_lpa: parseFloat(document.getElementById('c_lpa').value), visit_date: document.getElementById('c_date').value };
-            await fetch(`${API_BASE}/companies/`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-            closeModal('companyModal'); fetchCompanies();
+            const pkgMin = parseFloat(document.getElementById('c_pkg_min').value);
+            const pkgMax = parseFloat(document.getElementById('c_pkg_max').value);
+            if (pkgMax < pkgMin) { alert('Maximum package cannot be less than minimum package.'); return; }
+            const payload = {
+                company_name: document.getElementById('c_name').value,
+                job_role: document.getElementById('c_role').value,
+                package_min: pkgMin,
+                package_max: pkgMax,
+                min_cgpa: parseFloat(document.getElementById('c_min_cgpa').value),
+                visit_date: document.getElementById('c_date').value
+            };
+            const res = await fetch(`${API_BASE}/companies/`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+            });
+            if (res.ok) { closeModal('companyModal'); fetchCompanies(); }
+            else { const err = await res.json(); alert(`Error: ${err.detail}`); }
         }
 
-        // --- UPDATE PUT REQUEST ---
+        // ---- UPDATE STATUS ----
         async function updateStatus(appId, newStatus) {
-            await fetch(`${API_BASE}/applications/${appId}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ status: newStatus }) });
-            fetchApplications(); // Instantly refresh the table to show new color badge
+            await fetch(`${API_BASE}/applications/${appId}`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+            fetchApplications();
         }
 
-        // Initialize default view
+        // Initialize
         fetchApplications();
     </script>
 </body>
+
 </html>

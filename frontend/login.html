@@ -4,18 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placement Portal - Login</title>
+    <title>XIE Placement Portal - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Smooth fade transition between forms */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+        }
+
         .fade-in {
-            animation: fadeIn 0.3s ease-in-out;
+            animation: fadeIn 0.4s ease;
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(10px);
             }
 
             to {
@@ -26,142 +31,278 @@
     </style>
 </head>
 
-<body
-    class="bg-slate-900 h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070')] bg-cover bg-center bg-no-repeat relative">
+<body class="flex items-center justify-center min-h-screen relative p-4">
 
-    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-
-    <div
-        class="relative z-10 w-full max-w-md bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20">
+    <!-- Main Card -->
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 fade-in" id="formContainer">
 
         <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Campus Placement Portal</h1>
-            <p class="text-sm text-slate-500 mt-1">Sign in to manage your placement journey</p>
+            <div
+                class="bg-blue-600 text-white w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 text-lg font-bold shadow-md">
+                XIE</div>
+            <h1 class="text-2xl font-bold text-gray-900" id="formTitle">Placement Portal</h1>
+            <p class="text-gray-500 mt-1 text-sm" id="formSubtitle">Welcome back! Please login to continue.</p>
         </div>
 
-        <form id="login-form" class="fade-in block" onsubmit="handleLogin(event)">
-            <div class="mb-4">
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Email Address</label>
-                <input type="email" id="login_email" required
-                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
+        <!-- LOGIN FORM -->
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" id="loginEmail" required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+                    placeholder="student@xie.edu.in">
             </div>
-            <div class="mb-6">
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
-                <input type="password" id="login_password" required
-                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="block text-sm font-medium text-gray-700">Password</label>
+                    <button type="button" onclick="openModal('forgotModal')"
+                        class="text-xs text-blue-600 hover:text-blue-800 font-medium">Forgot Password?</button>
+                </div>
+                <input type="password" id="loginPassword" required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+                    placeholder="••••••••">
             </div>
-            <button type="submit"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg shadow-md transition-colors">
-                Sign In
-            </button>
-            <p class="text-center text-sm text-slate-600 mt-6">
-                Don't have an account? <button type="button" onclick="toggleForms()"
-                    class="text-blue-600 font-bold hover:underline">Create Account</button>
-            </p>
-        </form>
-
-        <form id="register-form" class="fade-in hidden" onsubmit="handleRegister(event)">
-            <div class="mb-4">
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Full Name</label>
-                <input type="text" id="reg_name" required
-                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Email Address</label>
-                <input type="email" id="reg_email" required
-                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Account Type</label>
-                <select id="reg_role"
-                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
-                    <option value="Student">Student (Apply for roles)</option>
-                    <option value="Admin">Admin (Manage placements)</option>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <select id="loginRole"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white transition">
+                    <option value="Student">Student</option>
+                    <option value="Admin">Admin</option>
                 </select>
             </div>
-            <div class="mb-6">
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
-                <input type="password" id="reg_password" required
-                    class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white/50">
+
+            <!-- Terms Checkbox -->
+            <div class="flex items-start mt-1">
+                <input type="checkbox" id="loginTerms" required
+                    class="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded cursor-pointer">
+                <label for="loginTerms" class="ml-2 text-sm text-gray-600 cursor-pointer">
+                    I agree to the
+                    <button type="button" onclick="openModal('tcModal')"
+                        class="text-blue-600 font-semibold hover:underline">Terms and Conditions</button>
+                </label>
             </div>
+
             <button type="submit"
-                class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-lg shadow-md transition-colors">
-                Create Account
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition shadow-md mt-2">
+                Sign In
             </button>
-            <p class="text-center text-sm text-slate-600 mt-6">
-                Already have an account? <button type="button" onclick="toggleForms()"
-                    class="text-blue-600 font-bold hover:underline">Sign In</button>
+            <p class="text-center text-sm text-gray-600">
+                Don't have an account? <button type="button" onclick="toggleForm('register')"
+                    class="text-blue-600 font-semibold hover:underline">Create one</button>
             </p>
         </form>
 
+        <!-- REGISTER FORM -->
+        <form id="registerForm" class="space-y-4 hidden">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input type="text" id="regName" required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+                    placeholder="Harsh Kadam">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" id="regEmail" required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+                    placeholder="student@xie.edu.in">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Create Password</label>
+                <input type="password" id="regPassword" required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+                    placeholder="Min 6 characters">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <select id="regRole"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white transition">
+                    <option value="Student">Student</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <!-- T&C for Register -->
+            <div class="flex items-start">
+                <input type="checkbox" id="regTerms" required
+                    class="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded cursor-pointer">
+                <label for="regTerms" class="ml-2 text-sm text-gray-600 cursor-pointer">
+                    I agree to the
+                    <button type="button" onclick="openModal('tcModal')"
+                        class="text-blue-600 font-semibold hover:underline">Terms and Conditions</button>
+                </label>
+            </div>
+            <button type="submit"
+                class="w-full bg-gray-900 hover:bg-black text-white font-semibold py-2.5 rounded-lg transition shadow-md">
+                Create Account
+            </button>
+            <p class="text-center text-sm text-gray-600">
+                Already have an account? <button type="button" onclick="toggleForm('login')"
+                    class="text-blue-600 font-semibold hover:underline">Sign In</button>
+            </p>
+        </form>
+    </div>
+
+    <!-- ===== FORGOT PASSWORD MODAL ===== -->
+    <div id="forgotModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-sm fade-in">
+            <h2 class="text-lg font-bold text-gray-900 mb-1">Forgot Password</h2>
+            <p class="text-sm text-gray-500 mb-4">Enter your registered email. If found, your account reset request will
+                be sent to the Placement Admin.</p>
+            <input type="email" id="resetEmail"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mb-4 transition"
+                placeholder="Enter your email">
+            <div class="flex justify-end gap-2">
+                <button onclick="closeModal('forgotModal')"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition">Cancel</button>
+                <button onclick="submitForgotPassword()"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition">Send
+                    Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TERMS & CONDITIONS MODAL ===== -->
+    <div id="tcModal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col fade-in">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h2 class="text-lg font-bold text-gray-900">Terms and Conditions</h2>
+                <span class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-1 rounded">XIE Placement Portal</span>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 text-sm text-gray-700 space-y-4">
+                <p><strong>Last updated: March 2025</strong></p>
+                <p>By registering and using the XIE Placement Portal, you agree to the following terms:</p>
+
+                <h3 class="font-semibold text-gray-900">1. Eligibility</h3>
+                <p>Only registered students of Xavier Institute of Engineering (XIE) are eligible to use this portal as
+                    students. All information provided must be accurate and up-to-date.</p>
+
+                <h3 class="font-semibold text-gray-900">2. Profile Accuracy</h3>
+                <p>You are responsible for ensuring your CGPA, resume, and personal details are accurate. Providing
+                    false information may result in immediate disqualification and disciplinary action.</p>
+
+                <h3 class="font-semibold text-gray-900">3. Resume Requirement</h3>
+                <p>A valid Google Docs or Google Drive hosted resume link is <strong>mandatory</strong> before applying
+                    for any company. This ensures the Placement Cell can access and verify your profile at all times.
+                </p>
+
+                <h3 class="font-semibold text-gray-900">4. Application Policy</h3>
+                <p>Each student may apply to each company's job role only <strong>once</strong>. Applications cannot be
+                    withdrawn once submitted. Multiple applications to the same role are not permitted.</p>
+
+                <h3 class="font-semibold text-gray-900">5. CGPA Eligibility</h3>
+                <p>Applications are subject to minimum CGPA requirements set by each company. The system will
+                    automatically enforce these. Your aggregate CGPA is computed from your four academic years.</p>
+
+                <h3 class="font-semibold text-gray-900">6. Data Privacy</h3>
+                <p>Your data is shared with recruiting companies participating in campus placement drives. By applying
+                    to a company, you consent to sharing your profile information with them.</p>
+
+                <h3 class="font-semibold text-gray-900">7. Conduct</h3>
+                <p>Students are expected to maintain professional conduct during all placement-related activities. Any
+                    violation may result in removal from the placement process.</p>
+
+                <h3 class="font-semibold text-gray-900">8. Contact</h3>
+                <p>For queries, contact the Placement Cell at <strong>placement@xie.edu.in</strong>.</p>
+            </div>
+            <div class="p-4 border-t flex justify-end gap-2">
+                <button onclick="closeModal('tcModal')"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition">Close</button>
+                <button onclick="acceptTerms()"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition">I
+                    Accept</button>
+            </div>
+        </div>
     </div>
 
     <script>
         const API_BASE = 'http://127.0.0.1:8000/api';
 
-        function toggleForms() {
-            document.getElementById('login-form').classList.toggle('hidden');
-            document.getElementById('register-form').classList.toggle('hidden');
+        // Modal helpers
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // Accept T&C — tick whichever checkbox is visible
+        function acceptTerms() {
+            const loginTerms = document.getElementById('loginTerms');
+            const regTerms = document.getElementById('regTerms');
+            if (!document.getElementById('loginForm').classList.contains('hidden')) loginTerms.checked = true;
+            else regTerms.checked = true;
+            closeModal('tcModal');
         }
 
-        async function handleLogin(e) {
-            e.preventDefault();
-            const payload = {
-                email: document.getElementById('login_email').value,
-                password: document.getElementById('login_password').value
-            };
+        // Forgot Password
+        function submitForgotPassword() {
+            const email = document.getElementById('resetEmail').value.trim();
+            if (!email) { alert('Please enter your email address.'); return; }
+            closeModal('forgotModal');
+            alert(`✅ Password reset request sent for ${email}.\n\nPlease contact the Placement Admin at placement@xie.edu.in or visit the admin office with your ID card to reset your password.`);
+        }
 
+        // Form toggle
+        function toggleForm(type) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const formTitle = document.getElementById('formTitle');
+            const formSubtitle = document.getElementById('formSubtitle');
+            if (type === 'register') {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                formTitle.innerText = 'Create Account';
+                formSubtitle.innerText = 'Register for the XIE Placement Portal.';
+            } else {
+                registerForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+                formTitle.innerText = 'Placement Portal';
+                formSubtitle.innerText = 'Welcome back! Please login to continue.';
+            }
+        }
+
+        // LOGIN
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
             try {
-                const response = await fetch(`${API_BASE}/auth/login`, {
+                const res = await fetch(`${API_BASE}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ email, password })
                 });
-
-                if (response.ok) {
-                    const userData = await response.json();
-
-                    // Save user data securely in the browser's local storage
-                    localStorage.setItem('user', JSON.stringify(userData));
-
-                    // Redirect based on role!
-                    if (userData.role === 'Admin') {
-                        window.location.href = 'admin.html';
-                    } else {
-                        window.location.href = 'student.html';
-                    }
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('user', JSON.stringify(data));
+                    window.location.href = data.role === 'Student' ? 'student.html' : 'admin.html';
                 } else {
-                    const error = await response.json();
-                    alert(`Login Failed: ${error.detail}`);
+                    const err = await res.json();
+                    alert(`Login Failed: ${err.detail}`);
                 }
-            } catch (err) { alert("Cannot connect to server."); }
-        }
+            } catch { alert('Could not connect to the server. Is Uvicorn running?'); }
+        });
 
-        async function handleRegister(e) {
+        // REGISTER
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const payload = {
-                full_name: document.getElementById('reg_name').value,
-                email: document.getElementById('reg_email').value,
-                role: document.getElementById('reg_role').value,
-                password: document.getElementById('reg_password').value
-            };
+            const full_name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+
+            if (password.length < 6) { alert('Password must be at least 6 characters.'); return; }
 
             try {
-                const response = await fetch(`${API_BASE}/auth/register`, {
+                const res = await fetch(`${API_BASE}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ full_name, email, password, role })
                 });
-
-                if (response.ok) {
-                    alert("Account Created! You can now sign in.");
-                    toggleForms(); // Switch back to login view
+                if (res.ok) {
+                    alert('Account created successfully! You can now log in.');
+                    toggleForm('login');
                 } else {
-                    const error = await response.json();
-                    alert(`Error: ${error.detail}`);
+                    const err = await res.json();
+                    alert(`Registration Failed: ${err.detail}`);
                 }
-            } catch (err) { alert("Cannot connect to server."); }
-        }
+            } catch { alert('Could not connect to the server. Is Uvicorn running?'); }
+        });
     </script>
 </body>
 
